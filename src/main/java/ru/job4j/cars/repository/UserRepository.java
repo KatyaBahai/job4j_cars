@@ -1,6 +1,7 @@
 package ru.job4j.cars.repository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -10,53 +11,75 @@ import ru.job4j.cars.model.User;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @AllArgsConstructor
 public class UserRepository {
     private final SessionFactory sf;
 
     public User create(User user) {
         Session session = null;
+        Transaction tx = null;
         try {
             session = sf.openSession();
-            session.beginTransaction();
+            tx = session.beginTransaction();
             session.save(user);
-            session.getTransaction().commit();
+            tx.commit();
         } catch (Exception e) {
-                session.getTransaction().rollback();
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
         return user;
     }
 
     public void update(User user) {
         Session session = null;
+        Transaction tx = null;
         try {
             session = sf.openSession();
-            session.beginTransaction();
+            tx = session.beginTransaction();
             session.update(user);
             session.getTransaction().commit();
         } catch (Exception e) {
-            session.getTransaction().rollback();
+            log.error(e.getMessage(), e);
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
-        session.close();
     }
 
     public boolean delete(int userId) {
         boolean deleted = false;
         Session session = null;
+        Transaction tx = null;
         try {
             session = sf.openSession();
-            session.beginTransaction();
+            tx = session.beginTransaction();
             session.createQuery(
                             "DELETE User WHERE id = :userId")
                     .setParameter("userId", userId)
                     .executeUpdate();
-            session.getTransaction().commit();
+            tx.commit();
             deleted = true;
         } catch (Exception e) {
-            session.getTransaction().rollback();
+            log.error(e.getMessage(), e);
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
-        session.close();
         return deleted;
     }
 
