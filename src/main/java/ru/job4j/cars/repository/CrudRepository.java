@@ -44,14 +44,14 @@ public class CrudRepository {
             }
             return sq.uniqueResultOptional();
         };
-        return tx(command);
+        return performReadOnly(command);
     }
 
     public <T> List<T> query(String query, Class<T> cl) {
         Function<Session, List<T>> command = session -> session
                 .createQuery(query, cl)
                 .list();
-        return tx(command);
+        return performReadOnly(command);
     }
 
     public <T> List<T> query(String query, Class<T> cl, Map<String, Object> args) {
@@ -63,7 +63,7 @@ public class CrudRepository {
             }
             return sq.list();
         };
-        return tx(command);
+        return performReadOnly(command);
     }
 
     public <T> T tx(Function<Session, T> command) {
@@ -81,6 +81,13 @@ public class CrudRepository {
             throw e;
         } finally {
             session.close();
+        }
+    }
+
+    public <T> T performReadOnly(Function<Session, T> command) {
+        try (Session session = sf.openSession()) {
+            T rsl = command.apply(session);
+            return rsl;
         }
     }
 }
