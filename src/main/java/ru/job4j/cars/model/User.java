@@ -8,7 +8,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "auto_users")
 public class User {
-    @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String login;
     private String password;
