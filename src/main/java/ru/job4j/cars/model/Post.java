@@ -20,4 +20,10 @@ public class Post {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private List<PriceHistory> priceHistoryList = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "participants",
+            joinColumns = { @JoinColumn(name = "post_id") },
+    inverseJoinColumns = { @JoinColumn(name = "user_id") })
+        private List<User> participants = new ArrayList<>();
 }
