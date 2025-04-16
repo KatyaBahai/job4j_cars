@@ -26,4 +26,6 @@ public class Post {
             joinColumns = { @JoinColumn(name = "post_id") },
     inverseJoinColumns = { @JoinColumn(name = "user_id") })
         private List<User> participants = new ArrayList<>();
+    @Column(name = "car_id")
+    private Car car;
 }

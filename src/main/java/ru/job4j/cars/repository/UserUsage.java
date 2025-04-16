@@ -5,6 +5,7 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import ru.job4j.cars.model.User;
+import ru.job4j.cars.repository.user.HbUserRepository;
 
 public class UserUsage {
     public static void main(String[] args) {
@@ -13,11 +14,11 @@ public class UserUsage {
         try (SessionFactory sf = new MetadataSources(registry)
                 .buildMetadata().buildSessionFactory()) {
             CrudRepository crudRepository = new CrudRepository(sf);
-            UserRepository userRepository = new UserRepository(crudRepository);
+            HbUserRepository userRepository = new HbUserRepository(crudRepository);
             var user = new User();
             user.setLogin("admin");
             user.setPassword("admin");
-            userRepository.create(user);
+            userRepository.save(user);
             userRepository.findAllOrderById()
                     .forEach(System.out::println);
             System.out.println("1 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&1");
@@ -35,7 +36,7 @@ public class UserUsage {
             userRepository.findById(user.getId())
                     .ifPresent(System.out::println);
             System.out.println("6 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&5");
-            userRepository.delete(user.getId());
+            userRepository.deleteById(user.getId());
             userRepository.findAllOrderById()
                     .forEach(System.out::println);
             System.out.println("7 &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&6");

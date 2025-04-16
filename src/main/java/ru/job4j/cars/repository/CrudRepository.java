@@ -90,4 +90,15 @@ public class CrudRepository {
             return rsl;
         }
     }
+
+    public int executeDeleteOrUpdate(String query, Map<String, Object> args) {
+        Function<Session, Integer> command = session -> {
+            var sq = session.createQuery(query);
+            for (Map.Entry<String, Object> arg : args.entrySet()) {
+                sq.setParameter(arg.getKey(), arg.getValue());
+            }
+            return sq.executeUpdate();
+        };
+        return tx(command);
+    }
 }
