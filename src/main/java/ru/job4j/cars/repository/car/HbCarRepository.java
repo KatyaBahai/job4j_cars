@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.job4j.cars.model.Car;
-import ru.job4j.cars.model.Engine;
 import ru.job4j.cars.repository.CrudRepository;
 
 import java.util.Collection;
