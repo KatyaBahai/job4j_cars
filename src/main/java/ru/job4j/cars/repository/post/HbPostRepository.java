@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 import ru.job4j.cars.model.Post;
 import ru.job4j.cars.repository.CrudRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Map;
@@ -31,28 +30,27 @@ public class HbPostRepository implements PostRepository {
 
     @Override
     public Collection<Post> findAll() {
-        return cr.query("from Post", Post.class);
+        return cr.query("SELECT DISTINCT p from Post JOIN FETCH p.files", Post.class);
     }
 
     @Override
     public Collection<Post> findAllWithPhotos() {
-        return cr.query("FROM Post p JOIN FETCH p.files f", Post.class);
+        return cr.query("SELECT DISTINCT p FROM Post p JOIN FETCH p.files WHERE SIZE(p.files) > 0", Post.class);
     }
 
     @Override
     public Collection<Post> findAllWithTodayCreationDate() {
-        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
-        LocalDateTime startOfTomorrow = startOfToday.plusDays(1);
+        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
         return cr.query(
-                "from Post p WHERE p.creationDate >= :start AND p.creationDate < :end",
+                "SELECT DISTINCT p from Post p JOIN FETCH p.files WHERE p.creationDate > :yesterday",
                 Post.class,
-                Map.of("start", startOfToday, "end", startOfTomorrow)
+                Map.of("yesterday", yesterday)
         );
     }
 
     @Override
     public Collection<Post> findAllByCarBrand(int brandId) {
-        return cr.query("from Post p WHERE p.car.brand.id = :brandId",
+        return cr.query("SELECT DISTINCT p from Post p JOIN FETCH p.files WHERE p.car.brand.id = :brandId",
                 Post.class,
                 Map.of("brandId", brandId));
     }

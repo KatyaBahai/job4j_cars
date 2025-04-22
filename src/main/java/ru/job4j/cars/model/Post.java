@@ -5,7 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "auto_posts")
@@ -26,14 +27,14 @@ public class Post {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
-    private List<PriceHistory> priceHistoryList = new ArrayList<>();
+    private Set<PriceHistory> priceHistoryList = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "participants",
             joinColumns = {@JoinColumn(name = "post_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")})
-    private List<User> participants = new ArrayList<>();
+    private Set<User> participants = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "car_id")
@@ -44,5 +45,5 @@ public class Post {
             name = "post_files",
             joinColumns = {@JoinColumn(name = "post_id")},
             inverseJoinColumns = {@JoinColumn(name = "file_id")})
-    private List<File> files = new ArrayList<>();
+    private Set<File> files = new HashSet<>();
 }
