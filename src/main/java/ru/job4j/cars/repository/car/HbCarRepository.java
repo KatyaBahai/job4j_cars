@@ -19,7 +19,10 @@ public class HbCarRepository implements CarRepository {
     @Override
     public Optional<Car> add(Car car) {
         try {
-            cr.run(session -> session.save(car));
+            cr.run(session -> {
+                session.persist(car);
+                session.flush();
+            });
             return Optional.of(car);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

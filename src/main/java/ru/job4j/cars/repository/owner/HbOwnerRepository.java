@@ -19,7 +19,10 @@ public class HbOwnerRepository implements OwnerRepository {
     @Override
     public Optional<Owner> add(Owner owner) {
         try {
-            cr.run(session -> session.save(owner));
+            cr.run(session -> {
+                session.persist(owner);
+                session.flush();
+            });
             return Optional.of(owner);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

@@ -20,7 +20,10 @@ public class HbUserRepository implements UserRepository {
     @Override
     public Optional<User> save(User user) {
         try {
-            crudRepository.run(session -> session.save(user));
+            crudRepository.run(session -> {
+                session.persist(user);
+                session.flush();
+            });
             return Optional.of(user);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -28,14 +31,17 @@ public class HbUserRepository implements UserRepository {
         }
     }
 
+    @Override
     public void update(User user) {
         crudRepository.run(session -> session.merge(user));
     }
 
+    @Override
     public List<User> findAllOrderById() {
         return crudRepository.query("from User order by id asc", User.class);
     }
 
+    @Override
     public Optional<User> findById(int userId) {
         return crudRepository.optional(
                 "from User where id = :fId", User.class,
@@ -43,6 +49,7 @@ public class HbUserRepository implements UserRepository {
         );
     }
 
+    @Override
     public List<User> findByLikeLogin(String key) {
         return crudRepository.query(
                 "from User where login like :fKey", User.class,
@@ -50,6 +57,7 @@ public class HbUserRepository implements UserRepository {
         );
     }
 
+    @Override
     public Optional<User> findByLogin(String login) {
         return crudRepository.optional(
                 "from User where login = :fLogin", User.class,
@@ -58,17 +66,19 @@ public class HbUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByEmailAndPassword(String email, String password) {
-        return crudRepository.optional("from User WHERE email = :email AND password = :password",
+    public Optional<User> findByLoginAndPassword(String login, String password) {
+        return crudRepository.optional("from User WHERE login = :login AND password = :password",
                 User.class,
-                Map.of("email", email, "password", password));
+                Map.of("login", login, "password", password));
     }
 
+    @Override
     public boolean deleteById(int id) {
         int affectedRows = crudRepository.executeDeleteOrUpdate("DELETE User WHERE id = :id", Map.of("id", id));
         return affectedRows > 0;
     }
 
+    @Override
     public Collection<User> findAll() {
         return crudRepository.query("from User", User.class);
     }

@@ -19,7 +19,10 @@ public class HbFileRepository implements FileRepository {
     @Override
     public Optional<File> save(File file) {
         try {
-            cr.run(session -> session.save(file));
+            cr.run(session -> {
+                session.persist(file);
+                session.flush();
+            });
             return Optional.of(file);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

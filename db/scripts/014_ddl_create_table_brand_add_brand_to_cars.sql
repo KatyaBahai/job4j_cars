@@ -9,4 +9,4 @@ ADD COLUMN brand_id int;
 
 ALTER TABLE cars
 ADD CONSTRAINT fk_brand
-FOREIGN KEY (brand_id) REFERENCES cars(id);
+FOREIGN KEY (brand_id) REFERENCES brands(id);

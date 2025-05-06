@@ -29,7 +29,11 @@ public class HbBrandRepository implements BrandRepository {
     @Override
     public Optional<Brand> add(Brand brand) {
         try {
-            cr.run(session -> session.save(brand));
+            cr.run(session -> {
+                        session.persist(brand);
+                        session.flush();
+                    }
+            );
             return Optional.of(brand);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

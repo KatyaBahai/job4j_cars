@@ -20,7 +20,12 @@ public class HbPostRepository implements PostRepository {
     @Override
     public Optional<Post> add(Post post) {
         try {
-            cr.run(session -> session.persist(post));
+            cr.run(session -> {
+                        session.persist(post);
+                        session.flush();
+                        System.out.println("Post ID after save: " + post.getId());
+                    }
+            );
             return Optional.of(post);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -30,7 +35,7 @@ public class HbPostRepository implements PostRepository {
 
     @Override
     public Collection<Post> findAll() {
-        return cr.query("SELECT DISTINCT p from Post JOIN FETCH p.files", Post.class);
+        return cr.query("SELECT DISTINCT p from Post p LEFT JOIN FETCH p.files", Post.class);
     }
 
     @Override
@@ -42,7 +47,7 @@ public class HbPostRepository implements PostRepository {
     public Collection<Post> findAllWithTodayCreationDate() {
         LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
         return cr.query(
-                "SELECT DISTINCT p from Post p JOIN FETCH p.files WHERE p.creationDate > :yesterday",
+                "SELECT DISTINCT p from Post p LEFT JOIN FETCH p.files WHERE p.creationDate > :yesterday",
                 Post.class,
                 Map.of("yesterday", yesterday)
         );
@@ -50,15 +55,21 @@ public class HbPostRepository implements PostRepository {
 
     @Override
     public Collection<Post> findAllByCarBrand(int brandId) {
-        return cr.query("SELECT DISTINCT p from Post p JOIN FETCH p.files WHERE p.car.brand.id = :brandId",
+        return cr.query(
+                "SELECT DISTINCT p FROM Post p "
+                        + "JOIN p.car c "
+                        + "JOIN c.brand b "
+                        + "LEFT JOIN FETCH p.files "
+                        + "WHERE b.id = :brandId",
                 Post.class,
-                Map.of("brandId", brandId));
+                Map.of("brandId", brandId)
+        );
     }
 
     @Override
     public Optional<Post> findById(int id) {
         return cr.optional(
-                "SELECT DISTINCT p from Post p JOIN FETCH p.car LEFT JOIN FETCH p.files WHERE p.id = :fId",
+                "SELECT DISTINCT p from Post p LEFT JOIN FETCH p.car LEFT JOIN FETCH p.files WHERE p.id = :fId",
                 Post.class,
                 Map.of("fId", id)
         );
