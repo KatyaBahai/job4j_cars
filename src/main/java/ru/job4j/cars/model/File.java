@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Table(name = "files")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)

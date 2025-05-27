@@ -1,12 +1,12 @@
-package ru.job4j.cars.repository.post;
-
+package ru.job4j.cars.service.post;
 
 import ru.job4j.cars.model.Post;
+import ru.job4j.cars.model.User;
 
 import java.util.Collection;
 import java.util.Optional;
 
-public interface PostRepository {
+public interface PostService {
     Optional<Post> add(Post post);
 
     Collection<Post> findAll();
@@ -23,5 +23,6 @@ public interface PostRepository {
 
     boolean deleteById(int id);
 
-    boolean changeSoldStatus(int postId);
+    boolean changeSoldStatus(int postId, User user);
 }
+

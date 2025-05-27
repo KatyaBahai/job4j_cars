@@ -22,15 +22,22 @@ public class Post {
     private int id;
 
     private String description;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+
     @Column(name = "auto_user_id")
     private int userId;
 
+    @Column(name = "sold", nullable = false)
+    private boolean isSold;
+
+    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Set<PriceHistory> priceHistoryList = new HashSet<>();
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "participants",
@@ -42,6 +49,7 @@ public class Post {
     @JoinColumn(name = "car_id")
     private Car car;
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "post_files",

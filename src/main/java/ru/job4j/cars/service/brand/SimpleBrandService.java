@@ -1,0 +1,19 @@
+package ru.job4j.cars.service.brand;
+;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.job4j.cars.model.Brand;
+import ru.job4j.cars.repository.brand.BrandRepository;
+
+import java.util.Collection;
+
+@Service
+@RequiredArgsConstructor
+public class SimpleBrandService implements BrandService {
+    private final BrandRepository brandRepository;
+
+    @Override
+    public Collection<Brand> findAll() {
+        return brandRepository.findAll();
+    }
+}

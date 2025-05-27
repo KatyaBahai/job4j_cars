@@ -92,4 +92,11 @@ public class HbPostRepository implements PostRepository {
         int affectedRows = cr.executeDeleteOrUpdate("DELETE FROM Post WHERE id = :id", Map.of("id", id));
         return affectedRows > 0;
     }
+
+    @Override
+    public boolean changeSoldStatus(int postId) {
+        return cr.executeDeleteOrUpdate(
+                "UPDATE Post p SET p.sold = CASE WHEN p.sold = true THEN false ELSE true END WHERE p.id = :postId",
+                Map.of("postId", postId)) > 0;
+    }
 }
