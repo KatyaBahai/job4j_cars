@@ -14,7 +14,6 @@ import java.util.Optional;
 public class SimpleUserService implements UserService {
     private final UserRepository userRepository;
 
-
     @Override
     public void update(User user) {
         userRepository.update(user);
@@ -49,7 +48,6 @@ public class SimpleUserService implements UserService {
     public Collection<User> findAll() {
         return userRepository.findAll();
     }
-
 
     @Override
     public Optional<User> save(User user) {

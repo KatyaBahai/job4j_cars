@@ -1,6 +1,5 @@
 package ru.job4j.cars.service.post;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Post;

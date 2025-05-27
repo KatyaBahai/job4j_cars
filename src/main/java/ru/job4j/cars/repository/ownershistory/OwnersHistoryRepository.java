@@ -8,10 +8,14 @@ import java.util.Optional;
 
 public interface OwnersHistoryRepository {
     Collection<OwnersHistory> findByCar(Car car);
+
     Collection<OwnersHistory> findByOwner(Owner owner);
+
     Optional<OwnersHistory> add(OwnersHistory ownersHistory);
 
     boolean deleteById(int id);
+
     Optional<OwnersHistory> update(OwnersHistory ownersHistory);
+
     Optional<OwnersHistory> findCurrentOwner();
 }
