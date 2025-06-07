@@ -23,9 +23,15 @@ public class Car {
 
     private String name;
 
+    private int year;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
     private Brand brand;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "body_id")
+    private Body body;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "engine_id", foreignKey = @ForeignKey(name = "ENGINE_ID_FK"))
@@ -35,7 +41,7 @@ public class Car {
     @OneToMany(mappedBy = "car", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<OwnersHistory> ownersHistory = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "owner_id", foreignKey = @ForeignKey(name = "OWNER_ID_FK"))
     private Owner owner;
 }

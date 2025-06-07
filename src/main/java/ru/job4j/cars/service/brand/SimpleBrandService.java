@@ -6,6 +6,7 @@ import ru.job4j.cars.model.Brand;
 import ru.job4j.cars.repository.brand.BrandRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,5 +16,10 @@ public class SimpleBrandService implements BrandService {
     @Override
     public Collection<Brand> findAll() {
         return brandRepository.findAll();
+    }
+
+    @Override
+    public Optional<Brand> findById(int id) {
+        return brandRepository.findById(id);
     }
 }

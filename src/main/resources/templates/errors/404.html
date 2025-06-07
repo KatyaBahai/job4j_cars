@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <title>Error</title>
+    <th:block th:insert="fragments/header :: header"></th:block>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <header th:insert="fragments/header :: navbar"></header>
+    <div class="container">
+        <h3 class="mt-3">There's some error.</h3>
+        <p class="text-danger" th:text="${message}"></p>
+    </div>
+    <footer th:insert="fragments/footer :: footer"></footer>
+</div>
+</body>
+</html>

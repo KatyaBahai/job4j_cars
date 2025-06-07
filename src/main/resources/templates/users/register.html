@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <title>Sign Up</title>
+    <div th:insert="~{fragments/header :: header}"></div>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <header th:insert="fragments/header :: navbar"></header>
+    <div class="container">
+        <form class="mt-3" th:action="@{/users/register}" method="post">
+            <div class="mb-3" th:if="${error}">
+                <p class="text-danger" th:text="${error}"></p>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label"><b>Name</b></label>
+                <input type="text" class="form-control" id="name" name="name"  placeholder="John Doe" required>
+            </div>
+            <div class="mb-3">
+                <label for="login" class="form-label"><b>Login</b></label>
+                <input type="text" class="form-control" id="login" name="login" minlength="5" placeholder="Enter at least 5 symbols" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label"><b>Password</b></label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-6"></div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-6"><a class="btn btn-danger w-100" th:href="@{/index}">Cancel</a></div>
+                        <div class="col-6"><button class="btn btn-primary w-100" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <footer th:insert="fragments/footer :: footer"></footer>
+</div>
+</body>
+</html>

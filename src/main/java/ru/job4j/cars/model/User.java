@@ -3,6 +3,8 @@ package ru.job4j.cars.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "auto_users")
@@ -16,6 +18,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
+    @NotBlank(message = "Login is required")
+    @Size(min = 5, message = "Login must be at least 5 characters long")
     private String login;
     private String password;
 }

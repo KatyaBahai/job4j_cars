@@ -4,7 +4,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Builder
@@ -35,7 +37,7 @@ public class Post {
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
-    private Set<PriceHistory> priceHistoryList = new HashSet<>();
+    private Set<PriceHistory> priceHistorySet = new HashSet<>();
 
     @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -56,4 +58,10 @@ public class Post {
             joinColumns = {@JoinColumn(name = "post_id")},
             inverseJoinColumns = {@JoinColumn(name = "file_id")})
     private Set<File> files = new HashSet<>();
+
+    public Optional<Long> getLatestPrice() {
+        return priceHistorySet.stream()
+                .max(Comparator.comparing(PriceHistory::getCreated))
+                .map(PriceHistory::getAfter);
+    }
 }

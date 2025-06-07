@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.Instant;
 
+@Builder
 @Entity
 @Table(name = "price_history")
 @NoArgsConstructor

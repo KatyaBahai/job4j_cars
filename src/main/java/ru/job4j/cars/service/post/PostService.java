@@ -1,13 +1,14 @@
 package ru.job4j.cars.service.post;
 
-import ru.job4j.cars.model.Post;
-import ru.job4j.cars.model.User;
+import ru.job4j.cars.dto.FileDto;
+import ru.job4j.cars.model.*;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 public interface PostService {
-    Optional<Post> add(Post post);
+    Optional<Post> add(Post post, Set<FileDto> fileDtos);
 
     Collection<Post> findAll();
 
@@ -19,10 +20,19 @@ public interface PostService {
 
     Optional<Post> findById(int id);
 
-    Optional<Post> edit(Post post);
+    Optional<Post> edit(Post post, Set<FileDto> fileDtos);
 
     boolean deleteById(int id);
 
     boolean changeSoldStatus(int postId, User user);
+
+    Optional<Long> getLatestPrice(Post post);
+
+    Collection<Post> filterPosts(Integer brandId,
+                                 Integer minYear,
+                                 Integer maxPrice,
+                                 Boolean hasPhoto);
+
+    Collection<Post> findMyPosts(int userId);
 }
 

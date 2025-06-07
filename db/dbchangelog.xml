@@ -19,4 +19,7 @@
     <include file="scripts/014_ddl_create_table_brand_add_brand_to_cars.sql" relativeToChangelogFile="true"/>
     <include file="scripts/015_dml_insert_brands.sql" relativeToChangelogFile="true"/>
     <include file="scripts/016_dml_insert_engines.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/017_ddl_create_table_bodies_add_body_to_cars.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/018_dml_insert_bodies.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/019_ddl_alter_cars_add_year.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

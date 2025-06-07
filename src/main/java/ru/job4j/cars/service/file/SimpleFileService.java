@@ -5,19 +5,22 @@ import ru.job4j.cars.dto.FileDto;
 import ru.job4j.cars.model.File;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.job4j.cars.model.Post;
 import ru.job4j.cars.repository.file.FileRepository;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class SimpleFileService implements FileSerice {
+public class SimpleFileService implements FileService {
     private final FileRepository fileRepository;
     @Value("${file.directory}")
     private final String storageDirectory;
@@ -86,4 +89,14 @@ public class SimpleFileService implements FileSerice {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void clearOldFiles(Post post) {
+        Set<File> oldFiles = new HashSet<>(post.getFiles());
+        post.getFiles().clear();
+        for (File oldFile : oldFiles) {
+            deleteById(oldFile.getId());
+        }
+    }
+
 }

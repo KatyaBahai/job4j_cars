@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <title>Car ads</title>
+    <div th:insert="~{fragments/header :: header}"></div>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <header th:insert="fragments/header :: navbar"></header>
+    <form method="GET" action="/posts/list">
+        <label>
+            <input type="checkbox" name="hasPhoto" value="true"
+                   th:checked="${param.hasPhoto != null}" />
+            Only show posts with photos
+        </label>
+
+        <label for="brand">Brand:</label>
+        <select name="brandId" id="brand">
+            <option value="">--Any--</option>
+            <th:block th:each="brand : ${brands}">
+                <option th:value="${brand.id}" th:text="${brand}"></option>
+            </th:block>
+        </select>
+
+        <label for="maxPrice">Max Price:</label>
+        <select name="maxPrice" id="maxPrice">
+            <option value="">--Any--</option>
+            <th:block th:each="maxPrice : ${priceSteps}">
+                <option th:value="${maxPrice}" th:text="${maxPrice}"></option>
+            </th:block>
+        </select>
+
+        <label for="minYear">From Year:</label>
+        <select name="minYear" id="minYear">
+            <option value="">--Any--</option>
+            <th:block th:each="year : ${#numbers.sequence(1980, 2025)}">
+                <option th:value="${year}" th:text="${year}"></option>
+            </th:block>
+        </select>
+
+        <button type="submit">Filter</button>
+    </form>
+    <footer th:insert="fragments/footer :: footer"></footer>
+</div>
+</body>
+</html>

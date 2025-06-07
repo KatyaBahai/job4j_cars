@@ -19,6 +19,10 @@ public interface PostRepository {
 
     Optional<Post> findById(int id);
 
+    Collection<Post> findMyPosts(int userId);
+
+    Collection<Post> filterPosts(Integer brandId, Integer minYear, Integer maxPrice, Boolean hasPhoto);
+
     Optional<Post> edit(Post post);
 
     boolean deleteById(int id);

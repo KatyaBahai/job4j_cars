@@ -8,8 +8,10 @@ import ru.job4j.cars.repository.CrudRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -98,5 +100,48 @@ public class HbPostRepository implements PostRepository {
         return cr.executeDeleteOrUpdate(
                 "UPDATE Post p SET p.sold = CASE WHEN p.sold = true THEN false ELSE true END WHERE p.id = :postId",
                 Map.of("postId", postId)) > 0;
+    }
+
+    @Override
+    public Collection<Post>  findMyPosts(int userId) {
+        return cr.query(
+                "SELECT DISTINCT p FROM Post p "
+                        + "JOIN p.car c "
+                        + "JOIN c.brand b "
+                        + "LEFT JOIN FETCH p.files "
+                        + "WHERE p.userId = :userId",
+                Post.class,
+                Map.of("userId", userId)
+        );
+    }
+
+    @Override
+    public Collection<Post> filterPosts(Integer brandId, Integer minYear, Integer maxPrice, Boolean hasPhoto) {
+        Map<String, Object> argsMap = new HashMap<>();
+
+        StringBuilder hql = new StringBuilder("SELECT DISTINCT p FROM Post p "
+                + "JOIN p.car c "
+                + "JOIN c.brand b "
+                + "LEFT JOIN FETCH p.files ");
+
+        if (brandId != null) {
+            hql.append(" WHERE p.brand.id = :brandId");
+            argsMap.put("brandId", brandId);
+        }
+        if (minYear != null) {
+            hql.append(" AND p.year >= :minYear");
+            argsMap.put("minYear", minYear);
+        }
+        if (maxPrice != null) {
+            hql.append(" AND p.price <= :maxPrice");
+            argsMap.put("maxPrice", maxPrice);
+        }
+        if (Boolean.TRUE.equals(hasPhoto)) {
+            hql.append(" AND SIZE(p.files) > 0");
+        }
+        return cr.query(
+                hql.toString(),
+                Post.class,
+                argsMap);
     }
 }
