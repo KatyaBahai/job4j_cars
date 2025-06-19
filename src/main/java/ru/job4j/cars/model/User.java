@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@Builder
 @Entity
 @Table(name = "auto_users")
 @NoArgsConstructor

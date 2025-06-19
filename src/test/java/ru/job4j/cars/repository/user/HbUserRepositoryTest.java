@@ -43,7 +43,10 @@ class HbUserRepositoryTest {
 
     @Test
     void whenSaveThenSaved() {
-        User user = new User(0, "admin", "admin");
+        User user = User.builder()
+                .login("admin")
+                .password("admin")
+                .build();
         userRepository.save(user);
         User resultUser = userRepository.findByLogin(user.getLogin()).get();
         assertThat(user)
@@ -54,7 +57,10 @@ class HbUserRepositoryTest {
     @Disabled
     @Test
     void whenUpdateThenUpdated() {
-        User user = new User(0, "admin", "admin");
+        User user = User.builder()
+                .login("admin")
+                .password("admin")
+                .build();
         userRepository.save(user);
         user.setPassword("password");
         userRepository.update(user);
@@ -65,9 +71,18 @@ class HbUserRepositoryTest {
 
     @Test
     void whenFindAllOrderedByIdThenFoundAllInOrder() {
-        User user1 = new User(0, "admin", "admin");
-        User user2 = new User(0, "user", "password");
-        User user3 = new User(0, "user2", "password");
+        User user1 = User.builder()
+                .login("admin")
+                .password("admin")
+                .build();
+        User user2 = User.builder()
+                .login("user1")
+                .password("password")
+                .build();
+        User user3 = User.builder()
+                .login("user2")
+                .password("password")
+                .build();
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
@@ -77,7 +92,10 @@ class HbUserRepositoryTest {
 
     @Test
     void whenFindByIdThenFound() {
-        User user = new User(0, "admin", "admin");
+        User user = User.builder()
+                .login("admin")
+                .password("admin")
+                .build();
         userRepository.save(user);
         User resultUser = userRepository.findById(user.getId()).get();
         assertThat(resultUser.getLogin()).isEqualTo(user.getLogin());
@@ -85,7 +103,10 @@ class HbUserRepositoryTest {
 
     @Test
     void whenFindByIdNonExistingUserThenNothingFound() {
-        User user = new User(0, "admin", "admin");
+        User user = User.builder()
+                .login("admin")
+                .password("admin")
+                .build();
         userRepository.save(user);
         Optional<User> optUserResult = userRepository.findById(-1);
         assertThat(optUserResult).isEmpty();
@@ -93,9 +114,18 @@ class HbUserRepositoryTest {
 
     @Test
     void whenFindByLikeLoginThenFoundAll() {
-        User user1 = new User(0, "admin", "admin");
-        User user2 = new User(0, "user", "password");
-        User user3 = new User(0, "user2", "password");
+        User user1 = User.builder()
+                .login("admin")
+                .password("admin")
+                .build();
+        User user2 = User.builder()
+                .login("user1")
+                .password("password")
+                .build();
+        User user3 = User.builder()
+                .login("user2")
+                .password("password")
+                .build();
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
@@ -105,7 +135,10 @@ class HbUserRepositoryTest {
 
     @Test
     void whenFindByLoginThenFound() {
-        User user = new User(0, "admin", "admin");
+        User user = User.builder()
+                .login("admin")
+                .password("admin")
+                .build();
         userRepository.save(user);
         User resultUser = userRepository.findByLogin("admin").get();
         assertThat(user).usingRecursiveComparison().isEqualTo(resultUser);
@@ -113,7 +146,10 @@ class HbUserRepositoryTest {
 
     @Test
     void whenDeleteByIdThenDeleted() {
-        User user = new User(0, "admin", "admin");
+        User user = User.builder()
+                .login("admin")
+                .password("admin")
+                .build();
         userRepository.save(user);
         int id = userRepository.findByLogin(user.getLogin()).get().getId();
         userRepository.deleteById(id);
@@ -122,9 +158,18 @@ class HbUserRepositoryTest {
 
     @Test
     void whenFindAllThenAllFound() {
-        User user1 = new User(0, "admin", "admin");
-        User user2 = new User(0, "user", "admin");
-        User user3 = new User(0, "user2", "admin");
+        User user1 = User.builder()
+                .login("admin")
+                .password("admin")
+                .build();
+        User user2 = User.builder()
+                .login("user1")
+                .password("password")
+                .build();
+        User user3 = User.builder()
+                .login("user2")
+                .password("password")
+                .build();
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
