@@ -21,6 +21,7 @@ public class HbFileRepository implements FileRepository {
         try {
             cr.run(session -> {
                 session.persist(file);
+                System.out.println("Persisting file: " + file.getName());
                 session.flush();
             });
             return Optional.of(file);

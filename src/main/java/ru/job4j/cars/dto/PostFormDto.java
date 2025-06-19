@@ -5,9 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.job4j.cars.model.*;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +25,8 @@ public class PostFormDto {
     // Post fields
     private String description;
     // OwnersHistory fields
-    private Instant startAt;
-    private Instant endAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endAt;
 }

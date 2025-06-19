@@ -1,9 +1,11 @@
 package ru.job4j.cars.model;
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "owners_history")
@@ -25,19 +27,17 @@ public class OwnersHistory {
     @JoinColumn(name = "owner_id")
     private Owner owner;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "start_at", nullable = false)
-    private Instant startAt;
+    private LocalDate startAt;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "end_at")
-    private Instant endAt;
+    private LocalDate endAt;
 
-    public void setCar(Car car) {
-        this.car = car;
+    public void connectOwnerAndCar(Car car, Owner owner) {
         this.owner.getCarsHistory().add(this);
-    }
-
-    public void setOwner(Owner owner) {
-        this.owner = owner;
         this.car.getOwnersHistory().add(this);
     }
+
 }

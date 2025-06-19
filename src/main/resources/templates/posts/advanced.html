@@ -7,7 +7,7 @@
 <body>
 <div class="container-fluid p-0">
     <header th:insert="fragments/header :: navbar"></header>
-    <form method="GET" action="/posts/list">
+    <form method="GET" th:action="@{/posts/advanced/search}" class="d-flex flex-column gap-3">
         <label>
             <input type="checkbox" name="hasPhoto" value="true"
                    th:checked="${param.hasPhoto != null}" />
@@ -15,31 +15,57 @@
         </label>
 
         <label for="brand">Brand:</label>
-        <select name="brandId" id="brand">
+        <select name="brandId" id="brand" class="form-select" style="width: 200px;">
             <option value="">--Any--</option>
             <th:block th:each="brand : ${brands}">
-                <option th:value="${brand.id}" th:text="${brand}"></option>
+                <option th:value="${brand.id}" th:text="${brand.name}"></option>
             </th:block>
         </select>
 
-        <label for="maxPrice">Max Price:</label>
-        <select name="maxPrice" id="maxPrice">
+
+        <label for="body">Body:</label>
+        <select name="bodyId" id="body" class="form-select" style="width: 200px;">
             <option value="">--Any--</option>
-            <th:block th:each="maxPrice : ${priceSteps}">
-                <option th:value="${maxPrice}" th:text="${maxPrice}"></option>
+            <th:block th:each="body : ${bodies}">
+                <option th:value="${body.id}" th:text="${body.name}"></option>
             </th:block>
         </select>
 
         <label for="minYear">From Year:</label>
-        <select name="minYear" id="minYear">
+        <select name="minYear" id="minYear" class="form-select" style="width: 200px;">
             <option value="">--Any--</option>
             <th:block th:each="year : ${#numbers.sequence(1980, 2025)}">
                 <option th:value="${year}" th:text="${year}"></option>
             </th:block>
         </select>
 
-        <button type="submit">Filter</button>
+        <button type="submit" style="width: 150px;">Filter</button>
     </form>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" th:each="post : ${posts}">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body" th:object="${post}">
+                    <h5 class="card-title" th:text="*{car.brand.name}"></h5>
+                    <p class="card-text"><strong>Year:</strong> <span th:text="*{car.year}"></span></p>
+                    <p class="card-text"><strong>Price:</strong> $<span th:text="*{latestPrice.present} ? *{latestPrice.get()} : 'N/A'"></span></p>
+                    <p class="card-text"><strong>Body style:</strong> <span th:text="*{car.body.name}"></span></p>
+                    <p class="card-text"><strong>Engine:</strong> <span th:text="*{car.engine.name}"></span></p>
+                    <p class="card-text text-muted">
+                        <strong>Status:</strong>
+                        <span th:text="*{isSold} ? 'Sold' : 'Available'"></span>
+                    </p>
+                </div>
+                <div th:if="${post.files != null and !post.files.isEmpty()}">
+                    <img th:src="@{/files/{fileId}(fileId=${post.files[0].id})}" class="card-img-top" style="max-height: 200px; object-fit: cover;" alt="Car image">
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <a th:href="@{/posts/details/{postId}(postId=${post.id})}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer th:insert="fragments/footer :: footer"></footer>
 </div>
 </body>

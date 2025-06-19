@@ -8,18 +8,27 @@
 <div class="container-fluid p-0">
     <header th:insert="fragments/header :: navbar"></header>
 
+    <div class="container mt-4">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <div class="card h-100 shadow-sm">
                 <div class="card-body" th:object="${post}">
-                    <h5 class="card-title" th:text="*{car.brand}"></h5>
+                    <h5 class="card-title" th:text="*{car.brand.name}"></h5>
                     <p class="card-text"><strong>Year:</strong> <span th:text="*{car.year}"></span></p>
                     <p class="card-text"><strong>Price:</strong> $<span th:text="*{latestPrice.present} ? *{latestPrice.get()} : 'N/A'"></span></p>
-                    <p class="card-text"><strong>Body style:</strong> <span th:text="*{car.body}"></span></p>
-                    <p class="card-text"><strong>Engine:</strong> <span th:text="*{car.engine}"></span></p>
+                    <p class="card-text"><strong>Body style:</strong> <span th:text="*{car.body.name}"></span></p>
+                    <p class="card-text"><strong>Engine:</strong> <span th:text="*{car.engine.name}"></span></p>
                     <p class="card-text"><strong>Description:</strong> <span th:text="*{description}"></span></p>
+                    <p class="card-text"><strong>Current owner:</strong> <span th:text="*{car.owner.name}"></span></p>
                 </div>
                 <div th:if="${post.files != null and !post.files.isEmpty()}">
-                    <img th:src="@{${post.files[0].path}}" class="card-img-top" style="max-height: 200px; object-fit: cover;" alt="Car image">
+                    <div class="row">
+                        <div class="col-md-4 mb-2" th:each="file : ${post.files}">
+                            <img th:src="@{/files/{id}(id=${file.id})}"
+                                 class="img-thumbnail"
+                                 style="max-height: 200px; object-fit: cover;"
+                                 alt="Car image"/>
+                        </div>
+                    </div>
                 </div>
                 <p class="card-text text-muted">
                     <strong>Status:</strong>
@@ -37,7 +46,7 @@
                         </thead>
                         <tbody>
                         <tr th:each="ownersHistory : ${ownersHistoryList}">
-                            <td th:text="${ownersHistory.owner.id}"></td>
+                            <td th:text="${ownersHistory.owner.name}"></td>
                             <td th:text="${#temporals.format(ownersHistory.startAt, 'yyyy-MM-dd HH:mm')}"></td>
                             <td th:text="${ownersHistory.endAt != null ? #temporals.format(ownersHistory.endAt, 'yyyy-MM-dd HH:mm') : 'Present'}"></td>
                         </tr>
@@ -46,6 +55,7 @@
                 </div>
                 <p class="card-text"><strong>The post was created:</strong> <span th:text="${#temporals.format(post.creationDate, 'yyyy-MM-dd HH:mm')}"></span></p>
             </div>
+    </div>
     </div>
     <footer th:insert="fragments/footer :: footer"></footer>
 </div>

@@ -39,7 +39,14 @@ public class HbCarRepository implements CarRepository {
 
     @Override
     public Optional<Car> findById(int id) {
-        return cr.optional("from Car WHERE id = :fId",
+        return cr.optional("""
+                        SELECT DISTINCT c from Car c 
+                        JOIN FETCH c.brand 
+                        JOIN FETCH c.engine 
+                        JOIN FETCH c.body 
+                        LEFT JOIN FETCH c.ownersHistory
+                        WHERE c.id = :fId
+                        """,
                 Car.class,
                 Map.of("fId", id));
     }

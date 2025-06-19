@@ -1,5 +1,6 @@
 package ru.job4j.cars.service.file;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import ru.job4j.cars.dto.FileDto;
 import ru.job4j.cars.model.File;
@@ -19,11 +20,16 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class SimpleFileService implements FileService {
     private final FileRepository fileRepository;
     @Value("${file.directory}")
     private final String storageDirectory;
+
+    public SimpleFileService(FileRepository fileRepository,
+                             @Value("${file.directory}") String storageDirectory) {
+        this.fileRepository = fileRepository;
+        this.storageDirectory = storageDirectory;
+    }
 
     private void createStorageDirectory(String path) {
         try {
@@ -35,7 +41,8 @@ public class SimpleFileService implements FileService {
 
     @Override
     public Optional<File> save(FileDto fileDto) {
-        var path = getNewFilePath(fileDto.getName());
+        String fileName = UUID.randomUUID() + fileDto.getName();
+        var path = getNewFilePath(fileName);
         writeFileBytes(path, fileDto.getContent());
         return fileRepository.save(File.builder()
                 .name(fileDto.getName())
@@ -43,8 +50,8 @@ public class SimpleFileService implements FileService {
                 .build());
     }
 
-    private String getNewFilePath(String sourceName) {
-        return storageDirectory + java.io.File.separator + UUID.randomUUID() + sourceName;
+    private String getNewFilePath(String fileName) {
+        return storageDirectory + java.io.File.separator + fileName;
     }
 
     private void writeFileBytes(String path, byte[] content) {

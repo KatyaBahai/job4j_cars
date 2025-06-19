@@ -4,11 +4,12 @@ import ru.job4j.cars.dto.FileDto;
 import ru.job4j.cars.model.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public interface PostService {
-    Optional<Post> add(Post post, Set<FileDto> fileDtos);
+    Optional<Post> add(Post post, List<FileDto> fileDtos);
 
     Collection<Post> findAll();
 
@@ -20,7 +21,7 @@ public interface PostService {
 
     Optional<Post> findById(int id);
 
-    Optional<Post> edit(Post post, Set<FileDto> fileDtos);
+    Optional<Post> edit(Post post, List<FileDto> fileDtos);
 
     boolean deleteById(int id);
 
@@ -30,8 +31,7 @@ public interface PostService {
 
     Collection<Post> filterPosts(Integer brandId,
                                  Integer minYear,
-                                 Integer maxPrice,
-                                 Boolean hasPhoto);
+                                 Boolean hasPhoto, Integer bodyId);
 
     Collection<Post> findMyPosts(int userId);
 }

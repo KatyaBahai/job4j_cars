@@ -10,24 +10,25 @@ import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.post.PostRepository;
 import ru.job4j.cars.service.file.FileService;
 
+import javax.transaction.Transactional;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SimplePostService implements  PostService {
+public class SimplePostService implements PostService {
     private final PostRepository postRepository;
     private final FileService fileService;
 
     @Override
-    public Optional<Post> add(Post post, Set<FileDto> fileDtos) {
+    public Optional<Post> add(Post post, List<FileDto> fileDtos) {
         saveNewFiles(post, fileDtos);
         return postRepository.add(post);
     }
 
-    private void saveNewFiles(Post post, Set<FileDto> fileDtos) {
+    private void saveNewFiles(Post post, List<FileDto> fileDtos) {
         Set<File> files = post.getFiles();
         for (FileDto fileDto : fileDtos) {
+            System.out.println("Saving file: " + fileDto.getName());
             var file = fileService.save(fileDto);
             file.ifPresent(files::add);
         }
@@ -59,7 +60,7 @@ public class SimplePostService implements  PostService {
     }
 
     @Override
-    public Optional<Post> edit(Post post, Set<FileDto> fileDtos) {
+    public Optional<Post> edit(Post post, List<FileDto> fileDtos) {
         saveNewFiles(post, fileDtos);
         return postRepository.edit(post);
     }
@@ -71,7 +72,7 @@ public class SimplePostService implements  PostService {
 
     @Override
     public boolean changeSoldStatus(int postId, User user) throws RuntimeException {
-       Optional<Post> post = postRepository.findById(postId);
+        Optional<Post> post = postRepository.findById(postId);
         if (post.isEmpty()) {
             throw new RuntimeException("No Post was found with id " + postId);
         }
@@ -83,6 +84,9 @@ public class SimplePostService implements  PostService {
 
     @Override
     public Optional<Long> getLatestPrice(Post post) {
+        if (post.getPriceHistorySet().isEmpty()) {
+            return Optional.of(0L);
+        }
         return post.getPriceHistorySet().stream()
                 .max(Comparator.comparing(PriceHistory::getCreated))
                 .map(PriceHistory::getAfter);
@@ -90,18 +94,20 @@ public class SimplePostService implements  PostService {
 
     @Override
     public Collection<Post> filterPosts(Integer brandId,
-                                 Integer minYear,
-                                 Integer maxPrice,
-                                 Boolean hasPhoto) {
+                                        Integer minYear,
+                                        Boolean hasPhoto,
+                                        Integer bodyId) {
 
-        if (brandId == null && minYear == null && maxPrice == null && !hasPhoto) {
+        if (brandId == null && minYear == null && bodyId == null && hasPhoto == null) {
             return postRepository.findAll();
         } else {
-            return postRepository.filterPosts(brandId, minYear, maxPrice, hasPhoto);
+            Collection<Post> posts = postRepository.filterPosts(brandId, minYear, hasPhoto, bodyId);
+            posts.forEach(p -> p.getPriceHistorySet().size());
+            return posts;
         }
     }
 
-    public Collection<Post>  findMyPosts(int userId) {
+    public Collection<Post> findMyPosts(int userId) {
         return postRepository.findMyPosts(userId);
     }
 }

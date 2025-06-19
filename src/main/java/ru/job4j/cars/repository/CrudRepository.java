@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,6 +57,7 @@ public class CrudRepository {
         return performReadOnly(command);
     }
 
+    @Transactional
     public <T> List<T> query(String query, Class<T> cl, Map<String, Object> args) {
         Function<Session, List<T>> command = session -> {
             var sq = session

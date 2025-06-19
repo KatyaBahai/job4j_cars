@@ -13,7 +13,6 @@ import ru.job4j.cars.service.brand.BrandService;
 import ru.job4j.cars.service.car.CarService;
 import ru.job4j.cars.service.engine.EngineService;
 import ru.job4j.cars.service.file.FileService;
-import ru.job4j.cars.service.owner.OwnerService;
 import ru.job4j.cars.service.ownershistory.OwnersHistoryService;
 import ru.job4j.cars.service.post.PostService;
 
@@ -28,23 +27,26 @@ public class PostController {
     private final BrandService brandService;
     private final BodyService bodyService;
     private final EngineService engineService;
+    private final CarService carService;
     private final OwnersHistoryService ownersHistoryService;
     private final FileService fileService;
 
-    @GetMapping("/add")
+    @GetMapping("/create")
     public String getCreationPage(Model model) {
+        PostFormDto postFormDto = new PostFormDto();
+        model.addAttribute("postFormDto", postFormDto);
         model.addAttribute("brands", brandService.findAll());
         model.addAttribute("bodies", bodyService.findAll());
         model.addAttribute("engines", engineService.findAll());
         return "posts/create";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/create")
     public String addNewPost(@SessionAttribute User wowUser,
                              @ModelAttribute PostFormDto postFormDto,
-                             @RequestParam Set<MultipartFile> multipartFiles,
+                             @RequestParam List<MultipartFile> multipartFiles,
                              Model model) {
-        Set<FileDto> dtoFiles = new HashSet<>();
+        List<FileDto> dtoFiles = new ArrayList<>();
         try {
             for (MultipartFile file : multipartFiles) {
                 dtoFiles.add(new FileDto(file.getOriginalFilename(), file.getBytes()));
@@ -53,13 +55,14 @@ public class PostController {
             model.addAttribute("message", exception.getMessage());
             return "errors/404";
         }
-
         Car car = Car.builder()
                 .engine(engineService.findById(postFormDto.getEngineId()).get())
                 .body(bodyService.findById(postFormDto.getBodyId()).get())
                 .brand(brandService.findById(postFormDto.getBrandId()).get())
                 .owner(postFormDto.getOwner())
+                .year(postFormDto.getYear())
                 .build();
+        carService.add(car);
 
         Set<PriceHistory> priceHistorySet = new HashSet<>();
         priceHistorySet.add(PriceHistory.builder()
@@ -80,7 +83,7 @@ public class PostController {
             model.addAttribute("message", "There's been some problem. Please try again.");
             return "errors/404";
         }
-        return "redirect:/mine";
+        return "redirect:/index";
     }
 
     @GetMapping("/details/{postId}")
@@ -101,24 +104,25 @@ public class PostController {
 
         Optional<Post> postOptional = postService.findById(id);
         if (postOptional.isEmpty()) {
-            model.addAttribute("message", "There's no such task available, sorry!");
+            model.addAttribute("message", "There's no such post available, sorry!");
             return "errors/404";
         }
         Post post = postOptional.get();
-        model.addAttribute("price", postService.getLatestPrice(post));
+        model.addAttribute("price", postService.getLatestPrice(post).get());
         model.addAttribute("ownersHistoryList", ownersHistoryService.findByCar(post.getCar()));
         model.addAttribute("bodies", bodyService.findAll());
         model.addAttribute("brands", brandService.findAll());
         model.addAttribute("engines", engineService.findAll());
+        model.addAttribute("post", post);
         return "posts/edit";
     }
 
     @PostMapping("/edit")
     public String editPost(@ModelAttribute Post post,
                            @RequestParam Long price,
-                           @RequestParam Set<MultipartFile> multipartFiles,
+                           @RequestParam List<MultipartFile> multipartFiles,
                            Model model) {
-        Set<FileDto> dtoFiles = new HashSet<>();
+        List<FileDto> dtoFiles = new ArrayList<>();
         try {
             for (MultipartFile file : multipartFiles) {
                 dtoFiles.add(new FileDto(file.getOriginalFilename(), file.getBytes()));
@@ -164,7 +168,7 @@ public class PostController {
             model.addAttribute("message", "Failed to change the status of the post.");
             return "/errors/404";
         }
-        return "redirect:/list";
+        return "redirect:/index";
     }
 
     @GetMapping("/delete/{id}")
@@ -193,6 +197,8 @@ public class PostController {
 
     @GetMapping("/mine")
     public String getMyPosts(Model model, @SessionAttribute User wowUser) {
+        postService.findMyPosts(wowUser.getId()).forEach(p -> System.out.println(p.getCar().getYear()));
+
         model.addAttribute("brands", brandService.findAll());
         model.addAttribute("posts", postService.findMyPosts(wowUser.getId()));
         return "posts/mine";
@@ -205,28 +211,34 @@ public class PostController {
         return "posts/list";
     }
 
-    @GetMapping("/advanced")
-    public String getAdvancedSearch(Model model) {
-        List<Integer> priceSteps = new ArrayList<>();
-        for (int i = 10000; i <= 500000; i += 50000) {
-            priceSteps.add(i);
-        }
-        model.addAttribute("priceSteps", priceSteps);
+    @GetMapping("/list")
+    public String getList(Model model) {
         model.addAttribute("brands", brandService.findAll());
+        model.addAttribute("posts", postService.findAll());
+        return "posts/list";
+    }
+
+    @GetMapping("/advanced/search")
+    public String getAdvancedFilteredList(@RequestParam(required = false) Integer brandId,
+                                          @RequestParam(required = false) Integer minYear,
+                                          @RequestParam(required = false) Boolean hasPhoto,
+                                          @RequestParam(required = false) Integer bodyId,
+                                          Model model) {
+        model.addAttribute("brands", brandService.findAll());
+        model.addAttribute("bodies", bodyService.findAll());
+        model.addAttribute("posts", postService.filterPosts(brandId, minYear, hasPhoto, bodyId));
+        model.addAttribute("search-info",
+                String.format("Search results for: %s brand, %s minYear, hasPhoto: %s.",
+                        brandId, minYear, hasPhoto));
         return "posts/advanced";
     }
 
-    @GetMapping("/list")
-    public String getFilteredPosts(@RequestParam(required = false) Integer brandId,
-                                   @RequestParam(required = false) Integer minYear,
-                                   @RequestParam(required = false) Integer maxPrice,
-                                   @RequestParam(required = false) Boolean hasPhoto,
-                                   Model model) {
+    @GetMapping("/advanced")
+    public String getAdvancedPage(Model model) {
         model.addAttribute("brands", brandService.findAll());
-        model.addAttribute("posts", postService.filterPosts(brandId, minYear, maxPrice, hasPhoto));
-        model.addAttribute("search-info",
-                String.format("Search results for: %s brand, %s minYear, %s maxPrice, hasPhoto: %s.",
-                        brandId, minYear, maxPrice, hasPhoto));
-        return "posts/list";
+        model.addAttribute("bodies", bodyService.findAll());
+        model.addAttribute("posts", postService.findAll());
+        model.addAttribute("engines", engineService.findAll());
+        return "posts/advanced";
     }
 }

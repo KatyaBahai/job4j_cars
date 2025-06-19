@@ -19,5 +19,8 @@ public class PriceHistory {
     private int id;
     private long before;
     private long after;
-    private Instant created;
+    @Column(nullable = false)
+    @Builder.Default
+    private Instant created = Instant.now();
+
 }

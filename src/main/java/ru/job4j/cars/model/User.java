@@ -17,7 +17,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private int id;
+    private Integer id;
     @NotBlank(message = "Login is required")
     @Size(min = 5, message = "Login must be at least 5 characters long")
     private String login;

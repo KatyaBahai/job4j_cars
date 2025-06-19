@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+@ToString(exclude = { "files", "participants", "priceHistorySet", "description"})
 @Builder
 @Entity
 @Table(name = "auto_posts")
@@ -35,7 +36,7 @@ public class Post {
     private boolean isSold;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "post_id")
     private Set<PriceHistory> priceHistorySet = new HashSet<>();
 
@@ -47,7 +48,7 @@ public class Post {
             inverseJoinColumns = {@JoinColumn(name = "user_id")})
     private Set<User> participants = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "car_id")
     private Car car;
 

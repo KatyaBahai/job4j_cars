@@ -8,59 +8,54 @@
 <div class="container-fluid p-0">
     <header th:insert="fragments/header :: navbar"></header>
 
-    <div class="col-6">
-        <div class="row">
-            <div class="col-4">
-                <a class="btn btn-light w-100" th:href="@{/posts/photo-posts}">Find only with photos</a>
-            </div>
+    <div class="row g-2">
+        <div class="col-md-4">
+            <a class="btn btn-light w-100" th:href="@{/posts/photo-posts}">Find only with photos</a>
+        </div>
 
-            <form th:action="@{/posts/brand-posts}" method="get" class="row">
-                <div class="col-8">
-                    <select name="brand" class="form-select" required>
-                        <option value="" disabled selected>Select a brand</option>
-                        <option th:each="brand : ${brandList}"
-                                th:value="${brand.id}"
-                                th:text="${brand}">
-                        </option>
-                    </select>
-                </div>
-                <div class="col-4">
-                    <button type="submit" class="btn btn-light w-100">Find only by brand</button>
-                </div>
+        <div class="col-md-4">
+            <form th:action="@{/posts/brand-posts}" method="get" class="d-flex flex-column gap-2">
+                <select name="brandId" class="form-select" required>
+                    <option value="" disabled selected>Select a brand</option>
+                    <option th:each="brand : ${brands}"
+                            th:value="${brand.id}"
+                            th:text="${brand.name}">
+                    </option>
+                </select>
+                <button type="submit" class="btn btn-light">Find only by brand</button>
             </form>
+        </div>
 
-            <div class="col-4">
-                <a class="btn btn-light w-100" th:href="@{/posts/today-posts}">Find only posts dated within 24 hours</a>
-            </div>
+        <div class="col-md-4">
+            <a class="btn btn-light w-100" th:href="@{/posts/today-posts}">Find only posts dated within 24 hours</a>
+        </div>
 
-            <div class="col-4">
-                <a class="btn btn-light w-100" th:href="@{/posts/advanced}">Advanced search</a>
-            </div>
+        <div class="col-md-4">
+            <a class="btn btn-light w-100" th:href="@{/posts/advanced}">Advanced search</a>
+        </div>
     </div>
 
-        <div class="col-4">
-            <a class="btn btn-light w-100" th:text="*{search-info}"></a>
-        </div>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <div class="col" th:each="post : ${posts}">
             <div class="card h-100 shadow-sm">
                 <div class="card-body" th:object="${post}">
-                    <h5 class="card-title" th:text="*{car.brand}"></h5>
+                    <h5 class="card-title" th:text="*{car.brand.name}"></h5>
                     <p class="card-text"><strong>Year:</strong> <span th:text="*{car.year}"></span></p>
                     <p class="card-text"><strong>Price:</strong> $<span th:text="*{latestPrice.present} ? *{latestPrice.get()} : 'N/A'"></span></p>
-                    <p class="card-text"><strong>Body style:</strong> <span th:text="*{car.body}"></span></p>
-                    <p class="card-text"><strong>Engine:</strong> <span th:text="*{car.engine}"></span></p>
+                    <p class="card-text"><strong>Body style:</strong> <span th:text="*{car.body.name}"></span></p>
+                    <p class="card-text"><strong>Engine:</strong> <span th:text="*{car.engine.name}"></span></p>
                     <p class="card-text text-muted">
                         <strong>Status:</strong>
                         <span th:text="*{isSold} ? 'Sold' : 'Available'"></span>
                     </p>
+
                 </div>
                 <div th:if="${post.files != null and !post.files.isEmpty()}">
-                    <img th:src="@{${post.files[0].path}}" class="card-img-top" style="max-height: 200px; object-fit: cover;" alt="Car image">
+                    <img th:src="@{/files/{fileId}(fileId=${post.files[0].id})}" class="card-img-top" style="max-height: 200px; object-fit: cover;" alt="Car image">
                 </div>
                 <div class="card-footer bg-transparent border-top-0">
-                    <a th:href="@{/posts/{postId}(postId=*{id})}" class="btn btn-primary">View Details</a>
+                    <a th:href="@{/posts/details/{postId}(postId=${post.id})}" class="btn btn-primary">View Details</a>
                 </div>
             </div>
         </div>

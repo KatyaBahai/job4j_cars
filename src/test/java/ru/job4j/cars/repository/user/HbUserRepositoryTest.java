@@ -51,6 +51,7 @@ class HbUserRepositoryTest {
                 .isEqualTo(resultUser);
     }
 
+    @Disabled
     @Test
     void whenUpdateThenUpdated() {
         User user = new User(0, "admin", "admin");

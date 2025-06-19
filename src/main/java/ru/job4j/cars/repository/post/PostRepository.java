@@ -21,7 +21,7 @@ public interface PostRepository {
 
     Collection<Post> findMyPosts(int userId);
 
-    Collection<Post> filterPosts(Integer brandId, Integer minYear, Integer maxPrice, Boolean hasPhoto);
+    Collection<Post> filterPosts(Integer brandId, Integer minYear, Boolean hasPhoto, Integer bodyId);
 
     Optional<Post> edit(Post post);
 

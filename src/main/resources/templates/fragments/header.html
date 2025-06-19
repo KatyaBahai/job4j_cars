@@ -41,18 +41,18 @@
                     <a class="nav-item nav-link" href="/">Main</a>
                     <a class="nav-item nav-link active" th:href="@{/posts/list}">Cars for Sale</a>
                     <a class="nav-item nav-link active" th:href="@{/posts/create}">Sell my car</a>
-                    <div class="d-flex" th:if="${wowUser.name != 'Гость' && wowUser.name != null}">
+                    <div class="d-flex" th:if="${wowUser.login != 'Guest' && wowUser.login != null}">
                         <a class="nav-item nav-link active" th:href="@{/posts/mine}">My ads</a>
                     </div>
                 </div>
 
                 <div class="navbar-nav">
-                    <div class="d-flex" th:if="${wowUser.name == 'Guest' || wowUser.name == null}">
+                    <div class="d-flex" th:if="${wowUser.login == 'Guest' || wowUser.login == null}">
                         <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Sign up</a>
                         <a class="nav-link text-secondary" th:href="@{/users/login}">Sign in</a>
                     </div>
-                    <div class="d-flex" th:if="${wowUser.name != 'Гость' && wowUser.name != null}">
-                        <a class="nav-link text-secondary me-3" href="#" th:text="${wowUser.name}"></a>
+                    <div class="d-flex" th:if="${wowUser.login != 'Guest' && wowUser.login != null}">
+                        <a class="nav-link text-secondary me-3" href="#" th:text="${wowUser.login}"></a>
                         <a class="nav-link text-secondary" th:href="@{/users/logout}">Sign out</a>
                     </div>
                 </div>

@@ -1,2 +1,1 @@
-ALTER TABLE cars
-ADD COLUMN year int NOT NULL;
+ALTER TABLE cars ADD COLUMN production_year int NOT NULL;
