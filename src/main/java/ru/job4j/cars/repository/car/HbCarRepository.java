@@ -20,7 +20,7 @@ public class HbCarRepository implements CarRepository {
     public Optional<Car> add(Car car) {
         try {
             cr.run(session -> {
-                session.persist(car);
+                session.merge(car);
                 session.flush();
             });
             return Optional.of(car);
@@ -40,10 +40,10 @@ public class HbCarRepository implements CarRepository {
     @Override
     public Optional<Car> findById(int id) {
         return cr.optional("""
-                        SELECT DISTINCT c from Car c 
-                        JOIN FETCH c.brand 
-                        JOIN FETCH c.engine 
-                        JOIN FETCH c.body 
+                        SELECT DISTINCT c from Car c
+                        JOIN FETCH c.brand
+                        JOIN FETCH c.engine
+                        JOIN FETCH c.body
                         LEFT JOIN FETCH c.ownersHistory
                         WHERE c.id = :fId
                         """,

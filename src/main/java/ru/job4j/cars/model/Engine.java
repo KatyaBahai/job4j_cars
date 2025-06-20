@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
+@Builder
 @Table(name = "engines")
 @NoArgsConstructor
 @AllArgsConstructor

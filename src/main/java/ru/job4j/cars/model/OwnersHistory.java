@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.time.Instant;
 import java.time.LocalDate;
 
+@Builder
 @Entity
 @Table(name = "owners_history")
 @NoArgsConstructor
