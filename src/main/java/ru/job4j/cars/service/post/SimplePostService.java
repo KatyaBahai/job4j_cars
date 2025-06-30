@@ -131,7 +131,6 @@ public class SimplePostService implements PostService {
         return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
-
     @Transactional
     public Collection<Post> findMyPosts(int userId) {
         Collection<Post> posts = postRepository.findMyPosts(userId);
