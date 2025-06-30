@@ -5,11 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Brand;
 import ru.job4j.cars.repository.brand.BrandRepository;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SimpleBrandService implements BrandService {
     private final BrandRepository brandRepository;
 

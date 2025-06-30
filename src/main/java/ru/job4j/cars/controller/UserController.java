@@ -41,6 +41,7 @@ public class UserController {
 
     @PostMapping("/login")
     public String loginUser(@ModelAttribute User wowUser, Model model, HttpServletRequest request) {
+        System.out.println("Service proxy: " + userService.getClass());
         var userOptional = userService.findByLoginAndPassword(wowUser.getLogin(), wowUser.getPassword());
         if (userOptional.isEmpty()) {
             model.addAttribute("error", "This login or password is invalid");

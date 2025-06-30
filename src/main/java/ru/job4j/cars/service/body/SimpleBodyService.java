@@ -5,11 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Body;
 import ru.job4j.cars.repository.body.BodyRepository;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SimpleBodyService implements BodyService {
     private final BodyRepository bodyRepository;
 

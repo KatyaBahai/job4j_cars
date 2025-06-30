@@ -19,6 +19,7 @@ public class SimplePostService implements PostService {
     private final PostRepository postRepository;
     private final FileService fileService;
 
+    @Transactional
     @Override
     public Optional<Post> add(Post post, List<FileDto> fileDtos) {
         saveNewFiles(post, fileDtos);
@@ -34,42 +35,62 @@ public class SimplePostService implements PostService {
         }
     }
 
+    @Transactional
     @Override
     public Collection<Post> findAll() {
-        return postRepository.findAll();
+        Collection<Post> posts = postRepository.findAll();
+        return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
+    @Transactional
     @Override
     public Collection<Post> findAllWithPhotos() {
-        return postRepository.findAllWithPhotos();
+        Collection<Post> posts = postRepository.findAllWithPhotos();
+        return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
+    @Transactional
     @Override
     public Collection<Post> findAllWithTodayCreationDate() {
-        return postRepository.findAllWithTodayCreationDate();
+
+        Collection<Post> posts = postRepository.findAllWithTodayCreationDate();
+        return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
+    @Transactional
     @Override
     public Collection<Post> findAllByCarBrand(int brandId) {
-        return postRepository.findAllByCarBrand(brandId);
+        Collection<Post> posts = postRepository.findAllByCarBrand(brandId);
+        return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
+    @Transactional
     @Override
     public Optional<Post> findById(int id) {
-        return postRepository.findById(id);
+       Optional<Post> postOpt = postRepository.findById(id);
+       if (postOpt.isPresent()) {
+           Post post = postOpt.get();
+           post.getFiles().size();
+           post.getPriceHistorySet().size();
+           return Optional.of(post);
+       }
+        return postOpt;
     }
 
+    @Transactional
     @Override
     public Optional<Post> edit(Post post, List<FileDto> fileDtos) {
         saveNewFiles(post, fileDtos);
         return postRepository.edit(post);
     }
 
+    @Transactional
     @Override
     public boolean deleteById(int id) {
         return postRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public boolean changeSoldStatus(int postId, User user) throws RuntimeException {
         Optional<Post> post = postRepository.findById(postId);
@@ -82,6 +103,7 @@ public class SimplePostService implements PostService {
         return postRepository.changeSoldStatus(postId);
     }
 
+    @Transactional
     @Override
     public Optional<Long> getLatestPrice(Post post) {
         if (post.getPriceHistorySet().isEmpty()) {
@@ -92,22 +114,35 @@ public class SimplePostService implements PostService {
                 .map(PriceHistory::getAfter);
     }
 
+    @Transactional
     @Override
     public Collection<Post> filterPosts(Integer brandId,
                                         Integer minYear,
                                         Boolean hasPhoto,
                                         Integer bodyId) {
 
+        Collection<Post> posts;
         if (brandId == null && minYear == null && bodyId == null && hasPhoto == null) {
-            return postRepository.findAll();
+            posts = postRepository.findAll();
+
         } else {
-            Collection<Post> posts = postRepository.filterPosts(brandId, minYear, hasPhoto, bodyId);
-            posts.forEach(p -> p.getPriceHistorySet().size());
-            return posts;
+            posts = postRepository.filterPosts(brandId, minYear, hasPhoto, bodyId);
         }
+        return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
+
+    @Transactional
     public Collection<Post> findMyPosts(int userId) {
-        return postRepository.findMyPosts(userId);
+        Collection<Post> posts = postRepository.findMyPosts(userId);
+        return getPostsWithFilesAndPriceHistorySet(posts);
+    }
+
+    private Collection<Post> getPostsWithFilesAndPriceHistorySet(Collection<Post> posts) {
+        for (Post post : posts) {
+            post.getFiles().size();
+            post.getPriceHistorySet().size();
+        }
+        return posts;
     }
 }

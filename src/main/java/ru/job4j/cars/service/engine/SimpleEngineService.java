@@ -5,11 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Engine;
 import ru.job4j.cars.repository.engine.EngineRepository;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SimpleEngineService implements EngineService {
     private final EngineRepository engineRepository;
 

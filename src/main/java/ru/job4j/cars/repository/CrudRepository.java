@@ -40,6 +40,7 @@ public class CrudRepository {
 
     public <T> Optional<T> optional(String query, Class<T> cl, Map<String, Object> args) {
         Function<Session, Optional<T>> command = session -> {
+            System.out.println("Transaction active? " + session.getTransaction().isActive());
             var sq = session
                     .createQuery(query, cl);
             for (Map.Entry<String, Object> arg : args.entrySet()) {
@@ -47,14 +48,14 @@ public class CrudRepository {
             }
             return sq.uniqueResultOptional();
         };
-        return performReadOnly(command);
+        return tx(command);
     }
 
     public <T> List<T> query(String query, Class<T> cl) {
         Function<Session, List<T>> command = session -> session
                 .createQuery(query, cl)
                 .list();
-        return performReadOnly(command);
+        return tx(command);
     }
 
     @Transactional
@@ -67,32 +68,13 @@ public class CrudRepository {
             }
             return sq.list();
         };
-        return performReadOnly(command);
+        return tx(command);
     }
 
     public <T> T tx(Function<Session, T> command) {
-        Session session = sf.openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            T rsl = command.apply(session);
-            transaction.commit();
-            return rsl;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw e;
-        } finally {
-            session.close();
-        }
-    }
-
-    public <T> T performReadOnly(Function<Session, T> command) {
-        try (Session session = sf.openSession()) {
+        Session session = sf.getCurrentSession();
             T rsl = command.apply(session);
             return rsl;
-        }
     }
 
     public int executeDeleteOrUpdate(String query, Map<String, Object> args) {

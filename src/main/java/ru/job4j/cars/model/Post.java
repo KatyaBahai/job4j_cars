@@ -1,6 +1,7 @@
 package ru.job4j.cars.model;
 
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -36,6 +37,7 @@ public class Post {
     private boolean isSold;
 
     @Builder.Default
+    @BatchSize(size = 3)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "post_id")
     private Set<PriceHistory> priceHistorySet = new HashSet<>();
@@ -53,6 +55,7 @@ public class Post {
     private Car car;
 
     @Builder.Default
+    @BatchSize(size = 3)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "post_files",

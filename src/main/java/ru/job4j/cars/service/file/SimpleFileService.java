@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.job4j.cars.model.Post;
 import ru.job4j.cars.repository.file.FileRepository;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class SimpleFileService implements FileService {
     private final FileRepository fileRepository;
     @Value("${file.directory}")

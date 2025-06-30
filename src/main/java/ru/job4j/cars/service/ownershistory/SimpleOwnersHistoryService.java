@@ -10,11 +10,13 @@ import ru.job4j.cars.repository.owner.OwnerRepository;
 import ru.job4j.cars.repository.ownershistory.OwnersHistoryRepository;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SimpleOwnersHistoryService implements OwnersHistoryService {
     private final OwnersHistoryRepository ownersHistoryRepository;
     private final CarRepository carRepository;

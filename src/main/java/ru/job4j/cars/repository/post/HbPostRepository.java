@@ -44,8 +44,7 @@ public class HbPostRepository implements PostRepository {
                         JOIN FETCH c.engine
                         JOIN FETCH c.body
                         JOIN FETCH c.brand
-                        LEFT JOIN FETCH p.priceHistorySet
-                        LEFT JOIN FETCH p.files""",
+                        """,
                 Post.class);
     }
 
@@ -57,8 +56,6 @@ public class HbPostRepository implements PostRepository {
                         JOIN FETCH c.engine
                         JOIN FETCH c.body
                         JOIN FETCH c.brand
-                        LEFT JOIN FETCH p.priceHistorySet
-                        LEFT JOIN FETCH p.files
                         WHERE SIZE(p.files) > 0""",
                 Post.class);
     }
@@ -73,8 +70,6 @@ public class HbPostRepository implements PostRepository {
                         JOIN FETCH c.engine
                         JOIN FETCH c.body
                         JOIN FETCH c.brand
-                        LEFT JOIN FETCH p.files
-                        LEFT JOIN FETCH p.priceHistorySet
                         WHERE p.creationDate > :yesterday""",
                 Post.class,
                 Map.of("yesterday", yesterday)
@@ -90,8 +85,6 @@ public class HbPostRepository implements PostRepository {
                         JOIN FETCH c.engine
                         JOIN FETCH c.body
                         JOIN FETCH c.brand b
-                        LEFT JOIN FETCH p.priceHistorySet
-                        LEFT JOIN FETCH p.files
                         WHERE b.id = :brandId""",
                 Post.class,
                 Map.of("brandId", brandId)
@@ -107,8 +100,6 @@ public class HbPostRepository implements PostRepository {
                         JOIN FETCH c.engine
                         JOIN FETCH c.body
                         JOIN FETCH c.brand
-                        LEFT JOIN FETCH p.priceHistorySet
-                        LEFT JOIN FETCH p.files
                         WHERE p.id = :fId""",
                 Post.class,
                 Map.of("fId", id)
@@ -149,8 +140,6 @@ public class HbPostRepository implements PostRepository {
                         JOIN FETCH c.engine
                         JOIN FETCH c.body
                         JOIN FETCH c.brand
-                        LEFT JOIN FETCH p.priceHistorySet
-                        LEFT JOIN FETCH p.files
                         WHERE p.userId = :userId""",
                 Post.class,
                 Map.of("userId", userId));
@@ -169,8 +158,6 @@ public class HbPostRepository implements PostRepository {
                 LEFT JOIN FETCH c.engine
                 LEFT JOIN FETCH c.body
                 LEFT JOIN FETCH c.brand
-                LEFT JOIN FETCH p.priceHistorySet
-                LEFT JOIN FETCH p.files
                 WHERE 1 = 1
                 """);
 
