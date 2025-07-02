@@ -1,6 +1,9 @@
 package ru.job4j.cars.service.post;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Service;
 import ru.job4j.cars.dto.FileDto;
 import ru.job4j.cars.model.File;
@@ -13,13 +16,14 @@ import ru.job4j.cars.service.file.FileService;
 import javax.transaction.Transactional;
 import java.util.*;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class SimplePostService implements PostService {
     private final PostRepository postRepository;
     private final FileService fileService;
+    private final SessionFactory sf;
 
-    @Transactional
     @Override
     public Optional<Post> add(Post post, List<FileDto> fileDtos) {
         saveNewFiles(post, fileDtos);
@@ -35,21 +39,30 @@ public class SimplePostService implements PostService {
         }
     }
 
-    @Transactional
     @Override
     public Collection<Post> findAll() {
-        Collection<Post> posts = postRepository.findAll();
-        return getPostsWithFilesAndPriceHistorySet(posts);
+        Session session = sf.getCurrentSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            Collection<Post> posts = postRepository.findAll();
+            Collection<Post> postsWithCollections = getPostsWithFilesAndPriceHistorySet(posts);
+            transaction.commit();
+            return postsWithCollections;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
+        }
     }
 
-    @Transactional
     @Override
     public Collection<Post> findAllWithPhotos() {
         Collection<Post> posts = postRepository.findAllWithPhotos();
         return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
-    @Transactional
     @Override
     public Collection<Post> findAllWithTodayCreationDate() {
 
@@ -57,14 +70,12 @@ public class SimplePostService implements PostService {
         return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
-    @Transactional
     @Override
     public Collection<Post> findAllByCarBrand(int brandId) {
         Collection<Post> posts = postRepository.findAllByCarBrand(brandId);
         return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
-    @Transactional
     @Override
     public Optional<Post> findById(int id) {
        Optional<Post> postOpt = postRepository.findById(id);
@@ -77,20 +88,17 @@ public class SimplePostService implements PostService {
         return postOpt;
     }
 
-    @Transactional
     @Override
     public Optional<Post> edit(Post post, List<FileDto> fileDtos) {
         saveNewFiles(post, fileDtos);
         return postRepository.edit(post);
     }
 
-    @Transactional
     @Override
     public boolean deleteById(int id) {
         return postRepository.deleteById(id);
     }
 
-    @Transactional
     @Override
     public boolean changeSoldStatus(int postId, User user) throws RuntimeException {
         Optional<Post> post = postRepository.findById(postId);
@@ -103,7 +111,6 @@ public class SimplePostService implements PostService {
         return postRepository.changeSoldStatus(postId);
     }
 
-    @Transactional
     @Override
     public Optional<Long> getLatestPrice(Post post) {
         if (post.getPriceHistorySet().isEmpty()) {
@@ -114,7 +121,6 @@ public class SimplePostService implements PostService {
                 .map(PriceHistory::getAfter);
     }
 
-    @Transactional
     @Override
     public Collection<Post> filterPosts(Integer brandId,
                                         Integer minYear,
@@ -131,10 +137,9 @@ public class SimplePostService implements PostService {
         return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
-    @Transactional
     public Collection<Post> findMyPosts(int userId) {
-        Collection<Post> posts = postRepository.findMyPosts(userId);
-        return getPostsWithFilesAndPriceHistorySet(posts);
+            Collection<Post> posts = postRepository.findMyPosts(userId);
+            return getPostsWithFilesAndPriceHistorySet(posts);
     }
 
     private Collection<Post> getPostsWithFilesAndPriceHistorySet(Collection<Post> posts) {
