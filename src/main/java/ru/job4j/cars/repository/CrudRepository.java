@@ -58,7 +58,6 @@ public class CrudRepository {
         return tx(command);
     }
 
-    @Transactional
     public <T> List<T> query(String query, Class<T> cl, Map<String, Object> args) {
         Function<Session, List<T>> command = session -> {
             var sq = session

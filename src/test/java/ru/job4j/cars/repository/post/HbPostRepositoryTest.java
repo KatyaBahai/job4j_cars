@@ -115,14 +115,13 @@ class HbPostRepositoryTest {
                 .userId(user.getId())
                 .description("-")
                 .build();
-        postRepository.add(post);
-        post.setDescription("description");
+        Post managedPost = postRepository.add(post).get();
+        managedPost.setDescription("description");
 
-        postRepository.edit(post);
-        System.out.println(post.getId());
-        Post resultPost = postRepository.findById(post.getId()).get();
-        assertThat(resultPost.getDescription()).isEqualTo(post.getDescription());
-        assertThat(resultPost.getId()).isEqualTo(post.getId());
+        postRepository.edit(managedPost);
+        Post resultPost = postRepository.findById(managedPost.getId()).get();
+        assertThat(resultPost.getDescription()).isEqualTo(managedPost.getDescription());
+        assertThat(resultPost.getId()).isEqualTo(managedPost.getId());
     }
 
     @Test
