@@ -34,37 +34,31 @@ public class SimpleUserService implements UserService {
         return userRepository.findById(userId);
     }
 
-    @Transactional
     @Override
     public List<User> findByLikeLogin(String key) {
         return userRepository.findByLikeLogin(key);
     }
 
-    @Transactional
     @Override
     public Optional<User> findByLogin(String login) {
         return userRepository.findByLogin(login);
     }
 
-    @Transactional
     @Override
     public boolean deleteById(int id) {
         return userRepository.deleteById(id);
     }
 
-    @Transactional
     @Override
     public Collection<User> findAll() {
         return userRepository.findAll();
     }
 
-    @Transactional
     @Override
     public Optional<User> save(User user) {
         return userRepository.save(user);
     }
 
-    @Transactional
     @Override
     public Optional<User> findByLoginAndPassword(String login, String password) {
         return userRepository.findByLoginAndPassword(login, password);

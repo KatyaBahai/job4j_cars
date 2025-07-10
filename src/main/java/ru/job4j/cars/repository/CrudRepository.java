@@ -71,9 +71,18 @@ public class CrudRepository {
     }
 
     public <T> T tx(Function<Session, T> command) {
-        Session session = sf.getCurrentSession();
-            T rsl = command.apply(session);
-            return rsl;
+        Transaction transaction = null;
+        try (Session session = sf.getCurrentSession()) {
+            transaction = session.beginTransaction();
+            T result = command.apply(session);
+            transaction.commit();
+            return result;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
+        }
     }
 
     public int executeDeleteOrUpdate(String query, Map<String, Object> args) {

@@ -93,18 +93,15 @@ public class HbPostRepository implements PostRepository {
     }
 
     @Override
-    public Optional<Post> findById(int id) {
-        return cr.optional(
-                """
-                        SELECT DISTINCT p FROM Post p
-                        JOIN FETCH p.car c
-                        JOIN FETCH c.engine
-                        JOIN FETCH c.body
-                        JOIN FETCH c.brand
-                        WHERE p.id = :fId""",
-                Post.class,
-                Map.of("fId", id)
-        );
+    public Optional<Post> findById(int postId) {
+        return cr.tx(session -> {
+            Post post = session.get(Post.class, postId);
+            if (post != null) {
+                post.getPriceHistorySet().size();
+                post.getFiles().size();
+            }
+            return Optional.ofNullable(post);
+        });
     }
 
     @Override
