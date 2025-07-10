@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Repository
 @AllArgsConstructor
 public class HbPostRepository implements PostRepository {
-    private final CrudRepository  cr;
+    private final CrudRepository cr;
 
     @Override
     public Optional<Post> add(Post post) {
@@ -39,12 +39,13 @@ public class HbPostRepository implements PostRepository {
     @Override
     public Collection<Post> findAll() {
         return cr.query("""
-                        SELECT DISTINCT p FROM Post p
-                        JOIN FETCH p.car c
-                        JOIN FETCH c.engine
-                        JOIN FETCH c.body
-                        JOIN FETCH c.brand
-                        """,
+                         SELECT DISTINCT p FROM Post p
+                         JOIN FETCH p.car c
+                         JOIN FETCH c.engine
+                         JOIN FETCH c.body
+                         JOIN FETCH c.brand
+                         LEFT JOIN FETCH p.priceHistorySet
+                         LEFT JOIN FETCH p.files""",
                 Post.class);
     }
 
